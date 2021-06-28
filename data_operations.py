@@ -59,6 +59,13 @@ def cast_to_datatype(dframe, column_list, datatype):
         dframe[column] = dframe[column].astype(datatype)
 
 
+def category_builder(category_list):
+    try:
+        return pd.Series(category_list, dtype="category")
+    except ValueError:
+        print(f"something went wrong: {ValueError}")
+
+
 def main():
     df_houses = pd.read_csv("final_list_houses_dataset.csv", sep=',')
     df_houses.sort_index()
@@ -105,11 +112,11 @@ def main():
     # changing NaN to 0 and 0.0 first resolves casting issue
     # using pandas Int64 with capital I could also work
     # df['col'] = df['col'].astype('Int64')
+
     # replace_nan_in_column(df_houses,["facades", "bedrooms", "open_fire"], 0)
-    replace_nan_w_this = 0
-    convert_nan_to_datatype(df_houses, ["facades", "bedrooms", "open_fire"], replace_nan_w_this, "int8")
+    convert_nan_to_datatype(df_houses, ["facades", "bedrooms", "open_fire"], 0, "int8")
     # replace_nan_in_column(df_houses,["price"], 0.0)
-    convert_nan_to_datatype(df_houses, ["price"], replace_nan_w_this, "float")
+    convert_nan_to_datatype(df_houses, ["price"], 0.0, "float")
     # todo: area column has NaN values, replace those
 
     # pd.to_numeric -> https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.to_numeric.html
@@ -130,17 +137,26 @@ def main():
     price_zeroes = df_houses[df_houses["price"] == 0]
     print(price_zeroes)
 
-    # print data types to check successful conversion
-    print(df_houses.dtypes)
-
     # create categoricals -> https://pandas.pydata.org/pandas-docs/stable/user_guide/categorical.html
-    kitchen_cat = ['installed', 'undefined', 'hyper equipped', 'semi equipped', 'usa semi equipped',
-                   'usa installed', 'usa hyper equipped', 'not installed' 'usa uninstalled']
+    kitchen_equipped_cat = ['installed', 'undefined', 'hyper equipped', 'semi equipped', 'usa semi equipped',
+                   'usa installed', 'usa hyper equipped', 'not installed', 'usa uninstalled']
     building_state_cat = ['good', 'just renovated', 'as new', 'to renovate', 'to be done up', 'to restore',
                           'undefined']
     property_type_cat = ['house', 'land', 'other']
     property_subtype_cat = ['house', 'villa', 'mixed', 'town', 'farmhouse', 'chalet', 'country', 'exceptional',
                             'building', 'apartment', 'mansion', 'bungalow', 'other', 'manor', 'castle', 'land']
+
+    categories_column_d = { "kitchen_equipped": kitchen_equipped_cat ,
+                            "building_state": building_state_cat,
+                            "property_type": property_type_cat,
+                            "property_subtype": property_subtype_cat}
+
+    # turn every column into a pd.Series(Category)
+    for column, cat_list in categories_column_d.items():
+        df_houses[column] = category_builder(cat_list)
+
+    # print data types to check successful conversion
+    print(df_houses.dtypes)
 
 
 if __name__ == '__main__':
