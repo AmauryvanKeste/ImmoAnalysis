@@ -42,9 +42,9 @@ def set_dtype_col_to_bool(dframe, columns_list):
         dframe[column].astype('bool')
 
 
-def replace_nan_in_column(dframe, columns_list, val):
+def replace_nan_in_column(dframe, columns_list, new_val):
     for column in columns_list:
-        dframe[column].fillna(value=val, inplace=True)
+        dframe[column].fillna(value=new_val, inplace=True)
 
 
 def change_nan_value_to_mean(dframe, columns_list):
@@ -101,13 +101,17 @@ def main():
     replace_nan_in_column(df_houses, change_nan_to_undefined, "undefined")
 
     # cast to int8, float64 before calculating mean
+    # ValueError: Cannot convert non-finite values (NA or inf) to integer
+    # changing NaN to 0 and 0.0 first resolves casting issue
+    replace_nan_in_column(df_houses,["facades", "bedrooms", "open_fire"], 0)
+    replace_nan_in_column(df_houses,["price"], 0.0)
     cast_to_datatype(df_houses, ["facades", "bedrooms", "open_fire"], "int8")
     cast_to_datatype(df_houses, ["price"], "float64")
-    # todo: ValueError: Cannot convert non-finite values (NA or inf) to integer
 
     # change nan values to mean() value for following columns
     columns_to_mean = ["facades", "bedrooms", "price", "open_fire"]
-    change_nan_value_to_mean(df_houses, columns_to_mean)
+    # todo: TypeError: can only concatenate str (not "float") to str
+    # change_nan_value_to_mean(df_houses, columns_to_mean)
 
     # create categoricals
     kitchen_cat = ['installed', 'undefined', 'hyper equipped', 'semi equipped', 'usa semi equipped',
