@@ -1,6 +1,9 @@
 # ImmoAnalysis
 With this repo we analyse the data of house sales in Belgium
 
+## Project follow-up
+Trello link : https://trello.com/b/IAvi3eCo/immo-kanban
+
 ## to work on repo
 git clone git@github.com:AmauryvanKeste/ImmoAnalysis.git
 
