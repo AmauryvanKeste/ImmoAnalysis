@@ -27,7 +27,7 @@ def replace_value_in_column(dframe, column, old_value, new_value):
 
 
 def set_dtype_col_to_bool(dframe, col_name):
-    dframe.astype({col_name: 'bool'}).dtypes
+    dframe[col_name].astype('bool')
 
 
 def replace_nan_in_column(dframe, column, val):
