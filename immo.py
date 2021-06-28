@@ -8,17 +8,37 @@ def print_unique_values(dframe):
         print(dframe[column_name].unique())
         print(f"-------------------------------")
 
+def rename_columns_dict(dframe, d_newnames):
+    dframe.rename(columns=d_newnames, inplace=True)
+
 def load_pandas():
     # entries 10092
     pd = Toolkit.initiate_pandas(20, 20)
     df_houses = pd.read_csv("final_list_houses_dataset.csv", sep=',')
     df_houses.sort_index()
-    print_unique_values(df_houses)
+    # print_unique_values(df_houses)
 
     print("--------------------")
     print(df_houses.info())
     print("--------------------")
     # dtypes: float64(5), int64(6), object(7)
+    df_houses.drop('Unnamed: 0', axis=1, inplace=True)
+    d_rename_cols_old_new = {"Area [m²]": "area"
+        , "Price [€]": "price"
+        , "state of the building": "building_state"
+        , "number of facades": "facades"
+        , "number of bedrooms": "bedrooms"
+        , "fully equipped kitchen": "kitchen_equipped"
+        , "open fire": "open_fire"
+        , "locality [zip code]": "locality"
+        , "surface of the land [m²]": "land_surface"
+        , "terrace surface [m²]": "terrace_surface"
+        , "swimming pool": "swimming_pool"
+        , "type of property": "property_type"
+        , "subtype of property": "property_subtype"
+        , "garden surface [m²]": "garden_surface"
+                             }
+    rename_columns_dict(df_houses, d_rename_cols_old_new)
     """  null values
     Area m2                     1736
     state of the building       3116
@@ -29,6 +49,8 @@ def load_pandas():
     open fire                   9346
     swimming pool               9692
     """
+    print("=================")
+    print(df_houses.info())
 
 if __name__ == '__main__':
     load_pandas()
