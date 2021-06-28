@@ -34,3 +34,31 @@ eg `~/anaconda3/envs/becode/bin/python
 
 ## Useful links for datacleaning
 https://www.educative.io/edpresso/basic-data-cleaning-using-pandas
+
+# data operations
+## drop columns
+"Unamed: 0"
+## rename column
+new column names
+area price building_state facades bedrooms kitchen_equipped furnished open_fire locality land_surface terrace terrace_surface swimming_pool property_type property_subtype garden garden_surface
+## fix type
+property_subtype -> change value "exceptiona" to "exceptional"
+## change dtype
+### make categoricals for
+kitchen_equipped building_state property_type property_subtype
+### make bool
+furnished swimming_pool garden terrace
+### change dtype for
+price->float64
+facades->small int
+bedrooms->small int
+open_fire->small int
+### NaN -> rounded(mean)
+facades
+bedrooms
+
+## drop rows
+check when price row it is not a float and then drop it
+
+## check if there are any values not in datatype like with price
+
