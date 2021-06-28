@@ -24,7 +24,7 @@ $ conda activate immograph
 conda install pandas matplotlib seaborn
 ```
 
-## to open houses file:<br/>
+## read houses dataset in python:<br/>
 ```
 houses = pd.read_csv("final_list_houses_dataset.csv", sep=',')
 houses.head()
