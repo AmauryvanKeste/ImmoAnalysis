@@ -72,7 +72,6 @@ def main():
     cols_that_change_to_bool_dtype = ["swimming pool", "garden", "terrace", "furnished"]
     set_dtype_col_to_bool(df_houses, cols_that_change_to_bool_dtype)
     replace_nan_in_column(df_houses, ["swimming pool"], False)
-    # todo: booleanate = change False and True!
     booleanate_these_columns = ["garden", "terrace"]
     change_zero_ones_to_true_false(df_houses, booleanate_these_columns)
     # replace "no" to "NaN" for price column
