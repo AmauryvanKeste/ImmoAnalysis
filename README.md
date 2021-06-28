@@ -26,8 +26,8 @@ conda install pandas matplotlib seaborn
 
 ## read houses dataset in python:<br/>
 ```
-houses = pd.read_csv("final_list_houses_dataset.csv", sep=',')
-houses.head()
+df_houses = pd.read_csv("final_list_houses_dataset.csv", sep=',')
+df_houses.head()
 ```
 ## configure your IDE to use Conda Environment
 eg `~/anaconda3/envs/becode/bin/python
