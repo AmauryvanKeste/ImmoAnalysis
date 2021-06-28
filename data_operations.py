@@ -52,4 +52,18 @@ def main():
 if __name__ == '__main__':
     main()
 
+# dtype changes + NaN values fill
+    #swimming_pool:
+    # df_houses['swimming_pool'].fillna(value=False, inplace=True)
+    # df_houses.astype({'swimming_pool': 'bool'}).dtypes
 
+    #garden:
+    # df_houses['garden'] = df_houses['garden'].replace(to_replace=0, value=False)
+    # df_houses['garden'] = df_houses['garden'].replace(to_replace=1, value=True)
+    # df_houses['garden'] = df_houses['garden'].replace(to_replace=1, value=True)
+
+    #terrace:
+    # df_houses['terrace'] = df_houses['terrace'].replace(to_replace=0, value=False)
+    # df_houses['terrace'] = df_houses['terrace'].replace(to_replace=1, value=True)
+    # df_houses.astype({'terrace': 'bool'}).dtypes
+    
