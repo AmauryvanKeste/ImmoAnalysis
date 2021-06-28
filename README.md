@@ -1,6 +1,10 @@
 # ImmoAnalysis
 With this repo we analyse the data of house sales in Belgium
 
+## Useful links
+https://pandas.pydata.org/pandas-docs/stable/user_guide/index.html
+https://www.educative.io/edpresso/basic-data-cleaning-using-pandas
+
 ## Project follow-up
 Trello link : https://trello.com/invite/b/IAvi3eCo/00d69f2e66157cc2a033d9f7f9848b9f/immo-kanban
 
@@ -32,8 +36,6 @@ df_houses.head()
 ## configure your IDE to use Conda Environment
 eg `~/anaconda3/envs/becode/bin/python`
 
-## Useful links for datacleaning
-https://www.educative.io/edpresso/basic-data-cleaning-using-pandas
 
 # data operations
 ## drop columns
@@ -64,9 +66,44 @@ new column names:
 ## change dtype
 ### make categoricals for
 * kitchen_equipped
+  * 'installed'
+  * nan -> 'undefined'
+  * 'hyper equipped'
+  * 'semi equipped'
+  * 'usa semi equipped'
+  * 'usa installed' 
+  * 'usa hyper equipped'
+  * 'not installed'
+  * 'usa uninstalled'
 * building_state
+  * good
+  * just renovated
+  * as new
+  * to renovate
+  * to be done up
+  * to restore
+  * nan -> undefined
 * property_type
+  * 'house'
+  * 'land'
+  * 'other'
 * property_subtype
+  * 'house'
+  * 'villa'µ
+  * 'mixed'
+  * 'town'
+  * 'farmhouse'
+  * 'chalet'
+  * 'country'
+  * 'exceptiona'
+  * 'building'
+  * 'apartment'
+  * 'mansion'
+  * 'bungalow'
+  * 'other'
+  * 'manor'
+  * 'castle'
+  * 'land'
 
 ### convert these columns to bool
 * furnished
@@ -75,10 +112,10 @@ new column names:
 * terrace
 
 ### change dtype for
-* price ->float64
-* facades->small int
-* bedrooms->small int
-* open_fire->small int
+* price -> float64
+* facades -> int8
+* bedrooms -> int8
+* open_fire -> int8
 
 ### NaN -> rounded(mean)
 * facades
