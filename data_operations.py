@@ -21,6 +21,11 @@ def print_unique_values(dframe):
 def rename_columns_dict(dframe, d_newnames):
     dframe.rename(columns=d_newnames, inplace=True)
 
+
+def change_value_in_column(dframe, column, old_value, new_value):
+    dframe[column] = dframe[column].replace(to_replace=old_value, value=new_value)
+
+
 def main():
     df_houses = pd.read_csv("final_list_houses_dataset.csv", sep=',')
     df_houses.sort_index()
@@ -41,11 +46,10 @@ def main():
         , "garden surface [m²]": "garden_surface"
                              }
     rename_columns_dict(df_houses, d_rename_cols_old_new)
+    change_value_in_column(df_houses, selected_column="property_subtype", old_val="exceptiona", new_val="exceptional")
 
 
 if __name__ == '__main__':
     main()
 
-# fix typo:
-    #df_houses['property_subtype'] = df_houses['property_subtype'].replace(to_replace='exceptiona', value='exeptional')
 
