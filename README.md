@@ -2,8 +2,8 @@
 With this repo we analyse the data of house sales in Belgium
 
 ## Useful links
-https://pandas.pydata.org/pandas-docs/stable/user_guide/index.html
-https://www.educative.io/edpresso/basic-data-cleaning-using-pandas
+* https://pandas.pydata.org/pandas-docs/stable/user_guide/index.html
+* https://www.educative.io/edpresso/basic-data-cleaning-using-pandas
 
 ## Project follow-up
 Trello link : https://trello.com/invite/b/IAvi3eCo/00d69f2e66157cc2a033d9f7f9848b9f/immo-kanban
