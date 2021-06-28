@@ -42,9 +42,9 @@ def replace_nan_in_column(dframe, columns_list, new_val):
         dframe[column].fillna(value=new_val, inplace=True)
 
 
-def convert_nan_to_datatype(dframe, columns_list, datatype):
+def convert_nan_to_datatype(dframe, columns_list, replace_nan_val, datatype):
     for column in columns_list:
-        dframe[column] = dframe[column].fillna(0).astype(datatype)
+        dframe[column] = dframe[column].fillna(replace_nan_val).astype(datatype)
 
 
 def change_nan_value_to_mean(dframe, columns_list):
@@ -106,9 +106,11 @@ def main():
     # using pandas Int64 with capital I could also work
     # df['col'] = df['col'].astype('Int64')
     # replace_nan_in_column(df_houses,["facades", "bedrooms", "open_fire"], 0)
-    convert_nan_to_datatype(df_houses, ["facades", "bedrooms", "open_fire"], "int8")
+    replace_nan_w_this = 0
+    convert_nan_to_datatype(df_houses, ["facades", "bedrooms", "open_fire"], replace_nan_w_this, "int8")
     # replace_nan_in_column(df_houses,["price"], 0.0)
-    convert_nan_to_datatype(df_houses, ["price"], float)
+    convert_nan_to_datatype(df_houses, ["price"], replace_nan_w_this, "float")
+    # todo: area column has NaN values, replace those
 
     # pd.to_numeric -> https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.to_numeric.html
     #   or astype() used here
@@ -120,6 +122,7 @@ def main():
     # change nan values to mean() value for following columns
     columns_to_mean = ["facades", "bedrooms", "price", "open_fire"]
     # change_nan_value_to_mean(df_houses, columns_to_mean)
+    # todo: apply mean values
     mean_price =  df_houses["price"].mean()
     print(mean_price)
 
@@ -130,8 +133,7 @@ def main():
     # print data types to check successful conversion
     print(df_houses.dtypes)
 
-
-    # create categoricals
+    # create categoricals -> https://pandas.pydata.org/pandas-docs/stable/user_guide/categorical.html
     kitchen_cat = ['installed', 'undefined', 'hyper equipped', 'semi equipped', 'usa semi equipped',
                    'usa installed', 'usa hyper equipped', 'not installed' 'usa uninstalled']
     building_state_cat = ['good', 'just renovated', 'as new', 'to renovate', 'to be done up', 'to restore',
