@@ -22,8 +22,16 @@ def rename_columns_dict(dframe, d_newnames):
     dframe.rename(columns=d_newnames, inplace=True)
 
 
-def change_value_in_column(dframe, column, old_value, new_value):
+def replace_value_in_column(dframe, column, old_value, new_value):
     dframe[column] = dframe[column].replace(to_replace=old_value, value=new_value)
+
+
+def set_dtype_col_to_bool(dframe, col_name):
+    dframe.astype({col_name: 'bool'}).dtypes
+
+
+def replace_nan_in_column(dframe, column, val):
+    dframe[column].fillna(value=val, inplace=True)
 
 
 def main():
@@ -46,24 +54,20 @@ def main():
         , "garden surface [m²]": "garden_surface"
                              }
     rename_columns_dict(df_houses, d_rename_cols_old_new)
-    change_value_in_column(df_houses, selected_column="property_subtype", old_val="exceptiona", new_val="exceptional")
+    cols_that_change_to_bool_dtype = ["swimming pool", "garden", "terrace", "furnished"]
+    for column in cols_that_change_to_bool_dtype:
+        set_dtype_col_to_bool(df_houses, column)
+    #swimming_pool:
+    replace_nan_in_column(df_houses, "swimming pool", False)
+    booleanate_these_columns = ["garden", "terrace"]
+    for column in booleanate_these_columns:
+        replace_value_in_column(df_houses, column, 0, False)
+        replace_value_in_column(df_houses, column, 1, True)
 
 
 if __name__ == '__main__':
     main()
 
-# dtype changes + NaN values fill
-    #swimming_pool:
-    # df_houses['swimming_pool'].fillna(value=False, inplace=True)
-    # df_houses.astype({'swimming_pool': 'bool'}).dtypes
 
-    #garden:
-    # df_houses['garden'] = df_houses['garden'].replace(to_replace=0, value=False)
-    # df_houses['garden'] = df_houses['garden'].replace(to_replace=1, value=True)
-    # df_houses['garden'] = df_houses['garden'].replace(to_replace=1, value=True)
 
-    #terrace:
-    # df_houses['terrace'] = df_houses['terrace'].replace(to_replace=0, value=False)
-    # df_houses['terrace'] = df_houses['terrace'].replace(to_replace=1, value=True)
-    # df_houses.astype({'terrace': 'bool'}).dtypes
-    
+
