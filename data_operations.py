@@ -66,6 +66,19 @@ def category_builder(category_list):
         print(f"something went wrong: {ValueError}")
 
 
+def get_mean_for_column(dframe, column):
+    if dframe[column].dtype == np.int8:
+        # print(f"column {column}: {round(dframe[column].mean())}")
+        return round(dframe[column].mean())
+    elif dframe[column].dtype == float:
+        # print(f"column {column}: {dframe[column].mean()}")
+        return dframe[column].mean()
+
+
+def write_to_csv(dframe, file_path):
+    dframe.to_csv(file_path)
+
+
 def main():
     df_houses = pd.read_csv("final_list_houses_dataset.csv", sep=',')
     df_houses.sort_index()
@@ -126,44 +139,64 @@ def main():
     cast_to_datatype(df_houses, ["facades", "bedrooms", "open_fire"], "int8")
     cast_to_datatype(df_houses, ["price"], "float64")
 
-    # change nan values to mean() value for following columns
-    columns_to_mean = ["facades", "bedrooms", "price", "open_fire"]
-    # change_nan_value_to_mean(df_houses, columns_to_mean)
-    # todo: apply mean values
-    mean_price =  df_houses["price"].mean()
-    print(mean_price)
-
-    # print rows where price = 0.0
-    price_zeroes = df_houses[df_houses["price"] == 0]
-    print(price_zeroes)
-
     # create categoricals -> https://pandas.pydata.org/pandas-docs/stable/user_guide/categorical.html
     kitchen_equipped_cat = ['installed', 'undefined', 'hyper equipped', 'semi equipped', 'usa semi equipped',
-                   'usa installed', 'usa hyper equipped', 'not installed', 'usa uninstalled']
+                            'usa installed', 'usa hyper equipped', 'not installed', 'usa uninstalled']
     building_state_cat = ['good', 'just renovated', 'as new', 'to renovate', 'to be done up', 'to restore',
                           'undefined']
     property_type_cat = ['house', 'land', 'other']
     property_subtype_cat = ['house', 'villa', 'mixed', 'town', 'farmhouse', 'chalet', 'country', 'exceptional',
                             'building', 'apartment', 'mansion', 'bungalow', 'other', 'manor', 'castle', 'land']
 
-    categories_column_d = { "kitchen_equipped": kitchen_equipped_cat ,
-                            "building_state": building_state_cat,
-                            "property_type": property_type_cat,
-                            "property_subtype": property_subtype_cat}
+    categories_column_d = {"kitchen_equipped": kitchen_equipped_cat,
+                           "building_state": building_state_cat,
+                           "property_type": property_type_cat,
+                           "property_subtype": property_subtype_cat}
 
     # turn every column into a pd.Series(Category)
     for column, cat_list in categories_column_d.items():
         df_houses[column] = category_builder(cat_list)
 
+    # replace NaN's for every column in list with value returned by get_mean_for_column()
+    columns_to_mean = ["facades", "bedrooms", "price", "open_fire"]
+    for column in columns_to_mean:
+        replace_nan_in_column(df_houses, columns_to_mean, get_mean_for_column(df_houses, column))
+    # todo: round
+    """ means calculated:
+    facades:   2.2822037257233454
+    bedrooms:  3.595719381688466
+    price:     481228.216706302
+    open_fire: 0.08462148236226714
+    """
+
     # print data types to check successful conversion
     print(df_houses.dtypes)
+
+    # todo: something goes wrong starting wen double commas are encountered (row 7)
+    # 7,850.0,849000.0,,2,9,not installed,True,0,3300,615.0,True,20,True,,exceptional,False,0
+
+    print(df_houses.head(20))
+    # write to csv file to check more thoroughly
+    output_csv = "temp_output.csv"
+    write_to_csv(df_houses, output_csv)
+    # todo: first comma remove or label index
+    # ,area,price,building_state,facades,..
 
 
 if __name__ == '__main__':
     main()
 
-# def print_unique_values(dframe):
-#     for column_name, column_data in dframe.iteritems():
-#         print(f"now on column: {column_name} \n")
-#         print(dframe[column_name].unique())
-#         print(f"-------------------------------")
+"""
+iterating over columns in a datagrame with iteritems
+
+def print_unique_values(dframe):
+    for column_name, column_data in dframe.iteritems():
+        print(f"now on column: {column_name} \n")
+        print(dframe[column_name].unique())
+
+    
+# print rows where price = 0.0
+price_zeroes = df_houses[df_houses["price"] == 0]
+print(price_zeroes)
+
+"""
