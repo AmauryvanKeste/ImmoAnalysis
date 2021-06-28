@@ -9,7 +9,6 @@ git clone git@github.com:AmauryvanKeste/ImmoAnalysis.git
 $ conda create --name immograph
 $ conda activate immograph
 ```
->>>>>>> 066cae18ebd22e7486723389c46dd577c9ec3278
 
 ## to open houses file:<br/>
 houses = pd.read_csv("final_list_houses_dataset.csv", sep=',')<br/>
