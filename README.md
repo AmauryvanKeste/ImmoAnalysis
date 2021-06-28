@@ -31,3 +31,6 @@ houses.head()
 ```
 ## configure your IDE to use Conda Environment
 eg `~/anaconda3/envs/becode/bin/python
+
+## Useful links for datacleaning
+https://www.educative.io/edpresso/basic-data-cleaning-using-pandas
