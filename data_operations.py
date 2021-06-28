@@ -1,4 +1,4 @@
-def initiate_pandas(max_rows=10, max_cols=10, console_width=640):
+def initiate_pandas(max_rows=20, max_cols=20, console_width=640):
     try:
         import pandas as pd_custom
         pd_custom.set_option('display.max_columns', max_cols)
@@ -37,14 +37,14 @@ def change_zero_ones_to_true_false(dframe, columns_list):
         replace_value_in_column(dframe, column, 1, True)
 
 
-def set_dtype_col_to_bool(dframe, columns_list):
-    for column in columns_list:
-        dframe[column].astype('bool')
-
-
 def replace_nan_in_column(dframe, columns_list, new_val):
     for column in columns_list:
         dframe[column].fillna(value=new_val, inplace=True)
+
+
+def convert_nan_to_datatype(dframe, columns_list, datatype):
+    for column in columns_list:
+        dframe[column] = dframe[column].fillna(0).astype(datatype)
 
 
 def change_nan_value_to_mean(dframe, columns_list):
@@ -56,7 +56,7 @@ def change_nan_value_to_mean(dframe, columns_list):
 
 def cast_to_datatype(dframe, column_list, datatype):
     for column in column_list:
-        dframe[column].astype(datatype)
+        dframe[column] = dframe[column].astype(datatype)
 
 
 def main():
@@ -84,14 +84,14 @@ def main():
 
     # converting columns to dtype bool
     cols_that_change_to_bool_dtype = ["swimming_pool", "garden", "terrace", "furnished"]
-    set_dtype_col_to_bool(df_houses, cols_that_change_to_bool_dtype)
+    cast_to_datatype(df_houses, cols_that_change_to_bool_dtype, "bool")
 
     # change nan to False for swimming pool column
     replace_nan_in_column(df_houses, ["swimming_pool"], False)
 
     # 1 -> True and 0 -> False for garden & terrace columns
-    booleanate_these_columns = ["garden", "terrace"]
-    change_zero_ones_to_true_false(df_houses, booleanate_these_columns)
+    booleanize_these_columns = ["garden", "terrace"]
+    change_zero_ones_to_true_false(df_houses, booleanize_these_columns)
 
     # replace "no" to "NaN" for price column
     replace_value_in_column(df_houses, "price", 'no', np.NaN)
@@ -103,15 +103,33 @@ def main():
     # cast to int8, float64 before calculating mean
     # ValueError: Cannot convert non-finite values (NA or inf) to integer
     # changing NaN to 0 and 0.0 first resolves casting issue
-    replace_nan_in_column(df_houses,["facades", "bedrooms", "open_fire"], 0)
-    replace_nan_in_column(df_houses,["price"], 0.0)
+    # using pandas Int64 with capital I could also work
+    # df['col'] = df['col'].astype('Int64')
+    # replace_nan_in_column(df_houses,["facades", "bedrooms", "open_fire"], 0)
+    convert_nan_to_datatype(df_houses, ["facades", "bedrooms", "open_fire"], "int8")
+    # replace_nan_in_column(df_houses,["price"], 0.0)
+    convert_nan_to_datatype(df_houses, ["price"], float)
+
+    # pd.to_numeric -> https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.to_numeric.html
+    #   or astype() used here
+    # mixed dtypes conversion:
+    #   df['col'] = pd.to_numeric(df['col'], errors='coerce')
     cast_to_datatype(df_houses, ["facades", "bedrooms", "open_fire"], "int8")
     cast_to_datatype(df_houses, ["price"], "float64")
 
     # change nan values to mean() value for following columns
     columns_to_mean = ["facades", "bedrooms", "price", "open_fire"]
-    # todo: TypeError: can only concatenate str (not "float") to str
     # change_nan_value_to_mean(df_houses, columns_to_mean)
+    mean_price =  df_houses["price"].mean()
+    print(mean_price)
+
+    # print rows where price = 0.0
+    price_zeroes = df_houses[df_houses["price"] == 0]
+    print(price_zeroes)
+
+    # print data types to check successful conversion
+    print(df_houses.dtypes)
+
 
     # create categoricals
     kitchen_cat = ['installed', 'undefined', 'hyper equipped', 'semi equipped', 'usa semi equipped',
