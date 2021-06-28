@@ -54,6 +54,11 @@ def change_nan_value_to_mean(dframe, columns_list):
         print("==========")
 
 
+def cast_to_datatype(dframe, column_list, datatype):
+    for column in column_list:
+        dframe[column].astype(datatype)
+
+
 def main():
     df_houses = pd.read_csv("final_list_houses_dataset.csv", sep=',')
     df_houses.sort_index()
@@ -74,19 +79,37 @@ def main():
         , "subtype of property": "property_subtype"
         , "garden surface [m²]": "garden_surface"
     }
+    # renaming columns
     rename_columns_dict(df_houses, d_rename_cols_old_new)
-    cols_that_change_to_bool_dtype = ["swimming pool", "garden", "terrace", "furnished"]
+
+    # converting columns to dtype bool
+    cols_that_change_to_bool_dtype = ["swimming_pool", "garden", "terrace", "furnished"]
     set_dtype_col_to_bool(df_houses, cols_that_change_to_bool_dtype)
-    replace_nan_in_column(df_houses, "swimming pool", False)
+
+    # change nan to False for swimming pool column
+    replace_nan_in_column(df_houses, ["swimming_pool"], False)
+
+    # 1 -> True and 0 -> False for garden & terrace columns
     booleanate_these_columns = ["garden", "terrace"]
     change_zero_ones_to_true_false(df_houses, booleanate_these_columns)
+
     # replace "no" to "NaN" for price column
     replace_value_in_column(df_houses, "price", 'no', np.NaN)
-    # need to set them to to mean() before casting
-    change_nan_to_undefined = ["kitchen_equipped", "building_state"]
-    for column in change_nan_to_undefined:
-        replace_nan_in_column(df_houses, column, "undefined")
 
+    # change NaN to "undefined" for following columns
+    change_nan_to_undefined = ["kitchen_equipped", "building_state"]
+    replace_nan_in_column(df_houses, change_nan_to_undefined, "undefined")
+
+    # cast to int8, float64 before calculating mean
+    cast_to_datatype(df_houses, ["facades", "bedrooms", "open_fire"], "int8")
+    cast_to_datatype(df_houses, ["price"], "float64")
+    # todo: ValueError: Cannot convert non-finite values (NA or inf) to integer
+
+    # change nan values to mean() value for following columns
+    columns_to_mean = ["facades", "bedrooms", "price", "open_fire"]
+    change_nan_value_to_mean(df_houses, columns_to_mean)
+
+    # create categoricals
     kitchen_cat = ['installed', 'undefined', 'hyper equipped', 'semi equipped', 'usa semi equipped',
                    'usa installed', 'usa hyper equipped', 'not installed' 'usa uninstalled']
     building_state_cat = ['good', 'just renovated', 'as new', 'to renovate', 'to be done up', 'to restore',
