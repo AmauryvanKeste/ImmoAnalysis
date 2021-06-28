@@ -41,6 +41,27 @@ eg `~/anaconda3/envs/becode/bin/python`
 ## drop columns
 "Unamed: 0"
 ## rename column
+```
+{ "Area [m²]" : "area",
+  ,"Price [€]" : "price
+  ,"state of the building": "building_state
+  ,"number of facades": "facades
+  ,"number of bedrooms": "bedrooms
+  ,"fully equipped kitchen": "kitchen_equipped
+  ,"open fire": "open_fire
+  ,"locality [zip code]": "locality
+  ,"surface of the land [m²]": "land_surface
+  ,"terrace surface [m²]": "terrace_surface
+  ,"swimming pool": "swimming_pool
+  ,"type of property": "property_type
+  ,"subtype of property": "property_subtype
+  ,"garden surface [m²]": "garden_surface
+}
+```
+
+## fix typo
+* property_subtype -> change
+
 new column names:
 * area
 * price
