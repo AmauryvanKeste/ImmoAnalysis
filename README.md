@@ -11,6 +11,8 @@ $ conda activate immograph
 ```
 
 ## to open houses file:<br/>
+```
 houses = pd.read_csv("final_list_houses_dataset.csv", sep=',')<br/>
 houses.head()<br/>
+```
 
