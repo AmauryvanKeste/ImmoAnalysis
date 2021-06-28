@@ -17,7 +17,7 @@
       ,"swimming pool": "swimming_pool"
       ,"type of property": "property_type"
       ,"subtype of property": "property_subtype"
-      ,"garden surface [m²]": "garden_surface"}
+      ,"garden surface [m²]": "garden_surface"})
 '''
 # fix typo:
     #df_houses['property_subtype'] = df_houses['property_subtype'].replace(to_replace='exceptiona', value='exeptional')
