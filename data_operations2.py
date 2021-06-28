@@ -51,7 +51,9 @@ def change_nan_value_to_mean(dframe, columns_list):
 
 def main():
     df_houses = pd.read_csv("final_list_houses_dataset.csv", sep=',')
+    # sorting out of habit for performance
     df_houses.sort_index()
+    # drop 'Unnamed: 0' column as use for it is unknown
     df_houses.drop('Unnamed: 0', axis=1, inplace=True)
     d_rename_cols_old_new = {"Area [m²]": "area"
         , "Price [€]": "price"
@@ -68,23 +70,32 @@ def main():
         , "subtype of property": "property_subtype"
         , "garden surface [m²]": "garden_surface"
                              }
+    # renaming columns for ease of use
     rename_columns_dict(df_houses, d_rename_cols_old_new)
-    cols_that_change_to_bool_dtype = ["swimming pool", "garden", "terrace", "furnished"]
+
+    # convert following columns to dtype bool
+    cols_that_change_to_bool_dtype = ["swimming_pool", "garden", "terrace", "furnished"]
     set_dtype_col_to_bool(df_houses, cols_that_change_to_bool_dtype)
-    replace_nan_in_column(df_houses, ["swimming pool"], False)
+
+    # replace NaN values to False for "swimming_pool" column
+    replace_nan_in_column(df_houses, ["swimming_pool"], False)
+
+    # 0's to False and 1's to True
     booleanate_these_columns = ["garden", "terrace"]
     change_zero_ones_to_true_false(df_houses, booleanate_these_columns)
+
     # replace "no" to "NaN" for price column
     replace_value_in_column(df_houses, "price", 'no', np.NaN)
-    # need to set them to to mean() before casting
-    # todo: maybe we might drop price when = NaN instead of setting it to mean()
+
+    # set every NaN value to mean for these columns:
     columns_to_mean = ["facades", "bedrooms", "price", "open_fire"]
-    # todo: finish calculating mean
     change_nan_value_to_mean(df_houses, columns_to_mean)
-    # price "no" -> mean()
+
+    # change NaN to "undefined" for following columns:
     nan_to_undefined_columns = ["kitchen_equipped", "building_state"]
     replace_nan_in_column(df_houses, nan_to_undefined_columns, "undefined")
 
+    # start category creation
     kitchen_cat = ['installed', 'undefined', 'hyper equipped', 'semi equipped', 'usa semi equipped',
                         'usa installed', 'usa hyper equipped', 'not installed' 'usa uninstalled']
     building_state_cat = ['good', 'just renovated', 'as new', 'to renovate', 'to be done up', 'to restore',
