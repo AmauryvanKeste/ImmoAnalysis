@@ -16,6 +16,10 @@ python                         3.9.5      hdb3f193_3  pkgs/main
 $ conda create --name immograph python=3.9.5
 $ conda activate immograph
 ```
+### install conda packages
+```
+conda install pandas matplotlib seaborn
+```
 
 ## to open houses file:<br/>
 ```
