@@ -67,13 +67,13 @@ def main():
     for column in change_nan_to_undefined:
         replace_nan_in_column(df_houses, column, "undefined")
 
-    kitchen_category = ['installed', 'undefined', 'hyper equipped', 'semi equipped', 'usa semi equipped',
+    kitchen_cat = ['installed', 'undefined', 'hyper equipped', 'semi equipped', 'usa semi equipped',
                         'usa installed', 'usa hyper equipped', 'not installed' 'usa uninstalled']
-    building_state = ['good', 'just renovated', 'as new', 'to renovate', 'to be done up', 'to restore',
+    building_state_cat = ['good', 'just renovated', 'as new', 'to renovate', 'to be done up', 'to restore',
                        'undefined']
-    property_type = ['house', 'land', 'other' ]
-    property_subtype = ['house', 'villa', 'mixed', 'town', 'farmhouse', 'chalet', 'country', 'exceptional', 'building',
-                        'apartment', 'mansion', 'bungalow', 'other', 'manor', 'castle', 'land']
+    property_type_cat = ['house', 'land', 'other' ]
+    property_subtype_cat = ['house', 'villa', 'mixed', 'town', 'farmhouse', 'chalet', 'country', 'exceptional',
+                            'building', 'apartment', 'mansion', 'bungalow', 'other', 'manor', 'castle', 'land']
 
 if __name__ == '__main__':
     main()
