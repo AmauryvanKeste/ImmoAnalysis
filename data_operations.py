@@ -5,7 +5,7 @@ import pandas as pd
 
 def main():
     # https://pandas.pydata.org/pandas-docs/stable/user_guide/missing_data.html
-    # read in all rows and from col1 till last column
+    # read in all rows and all columns starting with the 2nd (1)
     df_houses = pd.read_csv("final_list_houses_dataset.csv", sep=',').iloc[:, 1:]
     immo_df_ops = DfOps(df_houses, 20, 15)
 

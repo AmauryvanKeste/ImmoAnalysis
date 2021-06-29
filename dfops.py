@@ -92,6 +92,3 @@ class DfOps:
         print("----- columns with missing values = True -------->")
         print(self.df.isnull().any())
         print("----------- missing values check END ------------>")
-
-
-
