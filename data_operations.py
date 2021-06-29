@@ -75,12 +75,16 @@ def create_category(category_list):
 
 
 def get_mean_for_column(dframe, column):
-    if dframe[column].dtype == np.int8:
-        # print(f"column {column}: {round(dframe[column].mean())}")
-        return round(dframe[column].mean())
-    elif dframe[column].dtype == float:
-        # print(f"column {column}: {dframe[column].mean()}")
-        return dframe[column].mean()
+    print("-----------tbing-----------")
+    print(dframe[column].mean())
+    print("-----------tbing done-----------")
+    return dframe[column].mean()
+    # if dframe[column].dtype == np.int8:
+    #     print(f"column {column}: {round(dframe[column].mean())}")
+        # return dframe[column].mean()
+    # elif dframe[column].dtype == float:
+    #     print(f"column {column}: {dframe[column].mean()}")
+        # return dframe[column].mean()
 
 
 def write_to_csv(dframe, file_path):
@@ -98,6 +102,7 @@ def main():
     # df_houses = pd.read_csv.iloc[:, 1:]
     # sorting out of habit for performance
     df_houses.sort_index()
+    print(get_mean_for_column(df_houses, "number of facades"))
 
     # renaming columns for easy of use
     d_rename_cols_old_new = {
@@ -136,21 +141,20 @@ def main():
     change_nan_to_undefined = ["kitchen_equipped", "building_state"]
     replace_nan_in_column(df_houses, change_nan_to_undefined, "undefined")
 
-    # todo: this didn't work for building_state, kitchen_equipped, property_type, find reason
-
     # using pandas Int64 with capital I could also work
     # df['col'] = df['col'].astype('Int64')
 
-    # cast to int8 datatype AND convert NaN values to 0
-    convert_nan_to_datatype(df_houses, ["facades", "bedrooms", "open_fire"], 0, "int8")
+    # convert_nan_to_datatype(df_houses, ["facades", "bedrooms", "open_fire"], 0, "")
+    # todo: check why this changed the mean value, and see if you can prevent that
     # cast to float datatype AND convert NaN values to 0.0
-    convert_nan_to_datatype(df_houses, ["area", "price"], 0.0, "float64")
+    # convert_nan_to_datatype(df_houses, ["area", "price"], 0, "float64")
 
-    # pd.to_numeric -> https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.to_numeric.html
-    #   or astype() used here
+    cast_to_datatype(df_houses, ["facades", "bedrooms", "open_fire", "price"], "float64")
+    indexes_price_is_no = df_houses[df_houses.price == "no"].index
+    df_houses.drop(indexes_price_is_no, inplace=True)
+
     # mixed dtypes conversion:
     #   df['col'] = pd.to_numeric(df['col'], errors='coerce')
-    # cast_to_datatype(df_houses, ["facades", "bedrooms", "open_fire"], "int8")
     # cast_to_datatype(df_houses, ["price"], "float64")
 
     # create categoricals -> https://pandas.pydata.org/pandas-docs/stable/user_guide/categorical.html
@@ -168,7 +172,6 @@ def main():
                            "property_subtype": property_subtype_cat}
 
     # turn every column into a pd.Series(Category)
-    # todo: this introduces NaN values again!
     for column, cat_list in categories_column_d.items():
         cat_type = create_category(cat_list)
         df_houses[column] = df_houses[column].astype(cat_type)
@@ -177,7 +180,9 @@ def main():
 
     # replace NaN's for every column in list with value returned by get_mean_for_column()
     columns_to_mean = ["facades", "bedrooms", "price", "open_fire"]
+    means = {}
     for column in columns_to_mean:
+        # means[column] = get_mean_for_column(df_houses, column)
         replace_nan_in_column(df_houses, columns_to_mean, get_mean_for_column(df_houses, column))
     """ means calculated:
     facades:   2.2822037257233454
