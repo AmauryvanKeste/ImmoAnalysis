@@ -122,7 +122,12 @@ def main():
     change_zero_ones_to_true_false(df_houses, booleanize_these_columns)
 
     # replace "no" to "NaN" for price column
-    replace_value_in_column(df_houses, "price", 'no', np.NaN)
+    replace_value_in_column(df_houses, "price", "no", np.NaN)
+    cast_to_datatype(df_houses, ["facades", "bedrooms", "open_fire", "price"], "float64")
+    # https://datatofish.com/rows-with-nan-pandas-dataframe/
+    indexes_price_is_no = df_houses[df_houses["price"].isna()].index
+    df_houses.drop(indexes_price_is_no, inplace=True)
+
 
     # replace exception to exceptional
     replace_value_in_column(df_houses, "property_subtype", "exceptiona", "exceptional")
@@ -132,9 +137,6 @@ def main():
     replace_nan_in_column(df_houses, change_nan_to_undefined, "undefined")
 
 
-    cast_to_datatype(df_houses, ["facades", "bedrooms", "open_fire", "price"], "float64")
-    indexes_price_is_no = df_houses[df_houses.price == "no"].index
-    df_houses.drop(indexes_price_is_no, inplace=True)
 
     # mixed dtypes conversion:
     #   df['col'] = pd.to_numeric(df['col'], errors='coerce')

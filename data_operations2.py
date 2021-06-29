@@ -112,6 +112,7 @@ if __name__ == '__main__':
 # Price column:
     # Drop all 'no' elements
         # indexNames = df_houses[df_houses['price'] == 'no' ].index
+        # drop rows with above index
         # df_houses.drop(indexNames, inplace=True)
     # Convert colimn dtype to float64
         #df_houses.price = df_houses.price.astype('float64')
