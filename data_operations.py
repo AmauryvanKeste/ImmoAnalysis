@@ -66,9 +66,10 @@ def cast_to_datatype(dframe, column_list, datatype):
         dframe[column] = dframe[column].astype(datatype)
 
 
-def category_builder(category_list):
+# https://hashtaggeeks.com/posts/pandas-categorical-data.html
+def create_category(category_list):
     try:
-        return pd.Series(category_list, dtype="category")
+        return pd.CategoricalDtype(categories=category_list)
     except ValueError:
         print(f"something went wrong: {ValueError}")
 
@@ -169,7 +170,10 @@ def main():
     # turn every column into a pd.Series(Category)
     # todo: this introduces NaN values again!
     for column, cat_list in categories_column_d.items():
-        df_houses[column] = category_builder(cat_list)
+        cat_type = create_category(cat_list)
+        df_houses[column] = df_houses[column].astype(cat_type)
+
+    # df_houses[column] = category_builder(cat_list)
 
     # replace NaN's for every column in list with value returned by get_mean_for_column()
     columns_to_mean = ["facades", "bedrooms", "price", "open_fire"]
@@ -202,6 +206,7 @@ def main():
     9,61.0,42000.0,,0,1,,True,0,1460,194.0,False,0,True,,apartment,False,0
     10,160.0,229000.0,,2,3,,True,0,6230,480.0,True,10,True,,mansion,True,400
     """
+    print("finished")
 
 
 if __name__ == '__main__':
