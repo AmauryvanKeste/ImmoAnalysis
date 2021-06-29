@@ -87,6 +87,9 @@ def write_to_csv(dframe, file_path):
     dframe.to_csv(file_path)
 
 
+def count_nans_in_df(dframe):
+    return dframe.isna().sum()
+
 def main():
     # https://pandas.pydata.org/pandas-docs/stable/user_guide/missing_data.html
     # read in all rows and from col1 till last column
@@ -115,7 +118,6 @@ def main():
     rename_columns_dict(df_houses, d_rename_cols_old_new)
 
     # converting columns to dtype bool
-    # todo: change yes no to true false before converting to bool
     # set 1"s to True and 0's to False for following columns
     booleanize_these_columns = ["garden", "terrace"]
     change_zero_ones_to_true_false(df_houses, booleanize_these_columns)
@@ -127,6 +129,10 @@ def main():
 
     # change NaN to False for "swimming_pool" column
     replace_nan_in_column(df_houses, ["swimming_pool"], False)
+
+    # count nans in rows
+    percent_nan_values = df_houses.isna().sum() * 100 / len(df_houses)
+    df_nan_values = pd.DataFrame({"nans_percentage": percent_nan_values})
 
     # replace "no" to "NaN" for price column
     replace_value_in_column(df_houses, "price", "no", np.NaN)
@@ -197,13 +203,23 @@ def main():
 
     import matplotlib.pyplot as plt
     import seaborn as sns
-    fig = plt.figure()
+    fig_correlation_heatmap = plt.figure()  # figsize=(width, height)
     sns.set_theme(style="whitegrid")
     sns.heatmap(corr_matrix, cmap="YlGnBu")
-    fig.suptitle("correlations between price & other columns", fontsize=12)
+    fig_correlation_heatmap.suptitle("correlations between price & other columns", fontsize=9)
     plt.title("correlations")
-    plt.show()
 
+    # plt.clf()
+    fig_barplot_nans = plt.figure()
+    sns.set_theme(style="whitegrid")
+    df_meaningful_nan = df_nan_values[df_nan_values["nans_percentage"] > 0]
+    df_meaningful_nan
+    sns.barplot(x=df_meaningful_nan.index, y='nans_percentage', data=df_meaningful_nan)
+    fig_barplot_nans.suptitle("NaN % for columns containing NaN values", fontsize=9)
+    plt.title("NaN percentage per column")
+
+
+    plt.show()
 
 if __name__ == '__main__':
     main()
