@@ -134,9 +134,9 @@ new column names:
 
 ### change dtype for
 * price -> float64
-* facades -> int8
-* bedrooms -> int8
-* open_fire -> int8
+* facades -> float64
+* bedrooms -> float64
+* open_fire -> float64
 
 ### NaN -> rounded(mean)
 * facades
