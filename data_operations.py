@@ -75,6 +75,7 @@ def create_category(category_list):
 
 
 def get_mean_for_column(dframe, column):
+    print(f"mean for {column}: {dframe[column].mean()}")
     return dframe[column].mean()
 
 
@@ -89,7 +90,6 @@ def main():
 
     # sorting out of habit for performance
     df_houses.sort_index()
-    print(get_mean_for_column(df_houses, "number of facades"))
 
     # renaming columns for easy of use
     d_rename_cols_old_new = {
@@ -124,17 +124,13 @@ def main():
     # replace "no" to "NaN" for price column
     replace_value_in_column(df_houses, "price", 'no', np.NaN)
 
+    # replace exception to exceptional
+    replace_value_in_column(df_houses, "property_subtype", "exceptiona", "exceptional")
+
     # change NaN to "undefined" for following columns
-    change_nan_to_undefined = ["kitchen_equipped", "building_state"]
+    change_nan_to_undefined = ["kitchen_equipped", "building_state", "property_subtype"]
     replace_nan_in_column(df_houses, change_nan_to_undefined, "undefined")
 
-    # using pandas Int64 with capital I could also work
-    # df['col'] = df['col'].astype('Int64')
-
-    # convert_nan_to_datatype(df_houses, ["facades", "bedrooms", "open_fire"], 0, "")
-    # todo: check why this changed the mean value, and see if you can prevent that
-    # cast to float datatype AND convert NaN values to 0.0
-    # convert_nan_to_datatype(df_houses, ["area", "price"], 0, "float64")
 
     cast_to_datatype(df_houses, ["facades", "bedrooms", "open_fire", "price"], "float64")
     indexes_price_is_no = df_houses[df_houses.price == "no"].index
@@ -142,7 +138,6 @@ def main():
 
     # mixed dtypes conversion:
     #   df['col'] = pd.to_numeric(df['col'], errors='coerce')
-    # cast_to_datatype(df_houses, ["price"], "float64")
 
     # create categoricals -> https://pandas.pydata.org/pandas-docs/stable/user_guide/categorical.html
     kitchen_equipped_cat = ['installed', 'undefined', 'hyper equipped', 'semi equipped', 'usa semi equipped',
@@ -150,8 +145,10 @@ def main():
     building_state_cat = ['good', 'just renovated', 'as new', 'to renovate', 'to be done up', 'to restore',
                           'undefined']
     property_type_cat = ['house', 'land', 'other']
-    property_subtype_cat = ['house', 'villa', 'mixed', 'town', 'farmhouse', 'chalet', 'country', 'exceptional',
-                            'building', 'apartment', 'mansion', 'bungalow', 'other', 'manor', 'castle', 'land']
+    # apply undefined
+    property_subtype_cat = ['house', 'villa', 'mixed', 'town', 'farmhouse', 'chalet',
+                            'country', 'exceptional', 'building', 'apartment', 'mansion',
+                            'bungalow', 'other', 'manor', 'castle', 'land', 'undefined']
 
     categories_column_d = {"kitchen_equipped": kitchen_equipped_cat,
                            "building_state": building_state_cat,
@@ -164,20 +161,23 @@ def main():
         df_houses[column] = df_houses[column].astype(cat_type)
 
     # replace NaN's for every column in list with value returned by get_mean_for_column()
-    columns_to_mean = ["facades", "bedrooms", "price", "open_fire"]
-    means = {}
+    columns_to_mean = ["area", "facades", "bedrooms", "price", "open_fire"]
     for column in columns_to_mean:
-        # means[column] = get_mean_for_column(df_houses, column)
-        replace_nan_in_column(df_houses, columns_to_mean, get_mean_for_column(df_houses, column))
+        mean = get_mean_for_column(df_houses, column)
+        replace_nan_in_column(df_houses, [column], mean)
 
     # print data types to check successful conversion
+    print("------------checking datatypes------------>")
     print(df_houses.dtypes)
+    print("----------checking datatypes END---------->")
 
-    print(df_houses.head(20))
-    # write to csv file to check more thoroughly
+    print("----- confirm there are no missing values ------->")
+    print(df_houses.isnull().any())  # True = missing values
+    print("----------- missing values check END ------------>")
+
+    # write to csv file
     output_csv = "temp_output.csv"
     write_to_csv(df_houses, output_csv)
-    # todo: first multiple comma issue in output
     print("finished")
 
 
