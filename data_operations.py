@@ -189,7 +189,18 @@ def main():
     write_to_csv(df_houses, output_csv)
     print("finished")
 
+    # create corr_matrix
+    corr_matrix = df_houses.corr().abs()
+    print(corr_matrix)
 
+    # visualise correlations
+
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    sns.set_theme(style="whitegrid")
+
+    sns.heatmap(corr_matrix, cmap="YlGnBu")
+    plt.show()
 if __name__ == '__main__':
     main()
 
