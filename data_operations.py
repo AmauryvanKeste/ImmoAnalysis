@@ -1,8 +1,8 @@
-def initiate_pandas(max_rows=20, max_cols=20, console_width=640):
+def initiate_pandas(max_cols=20, console_width=640):
     try:
         import pandas as pd_custom
         pd_custom.set_option('display.max_columns', max_cols)
-        pd_custom.set_option('display.max_rows', max_rows)
+        pd_custom.set_option('display.max_rows', None)
         pd_custom.set_option('display.width', console_width)  # make output in console wider
         return pd_custom
     except ImportError:
@@ -37,10 +37,16 @@ def change_zero_ones_to_true_false(dframe, columns_list):
         replace_value_in_column(dframe, column, 1, True)
 
 
+def count_nans_in_column(dframe, column):
+    return dframe[column].isna().sum()
+
+
+
 def replace_nan_in_column(dframe, columns_list, new_val):
     for column in columns_list:
-        dframe[column].fillna(value=new_val, inplace=True)
-    print(dframe[columns_list[0]])
+        dframe[column] = dframe[column].fillna(new_val)
+    # checked for NaN values after this operation, all counts were 0
+    # print(count_nans_in_column(dframe, columns_list[0]))
 
 
 def convert_nan_to_datatype(dframe, columns_list, replace_nan_val, datatype):
@@ -48,11 +54,11 @@ def convert_nan_to_datatype(dframe, columns_list, replace_nan_val, datatype):
         dframe[column] = dframe[column].fillna(replace_nan_val).astype(datatype)
 
 
-def change_nan_value_to_mean(dframe, columns_list):
-    for column in columns_list:
-        mean = dframe[column].mean()
-        print(mean)
-        print("==========")
+# def change_nan_value_to_mean(dframe, columns_list):
+#     for column in columns_list:
+#         mean = dframe[column].mean()
+#         print(mean)
+#         print("==========")
 
 
 def cast_to_datatype(dframe, column_list, datatype):
@@ -161,6 +167,7 @@ def main():
                            "property_subtype": property_subtype_cat}
 
     # turn every column into a pd.Series(Category)
+    # todo: this introduces NaN values again!
     for column, cat_list in categories_column_d.items():
         df_houses[column] = category_builder(cat_list)
 
