@@ -37,7 +37,7 @@ df_houses.head()
 eg `~/anaconda3/envs/becode/bin/python`
 
 
-# data operations
+# Part I data operations
 ## drop columns
 "Unamed: 0"
 ## rename column
@@ -144,6 +144,9 @@ new column names:
 
 ## drop rows
 check when price row is not a float and then drop it
+df_houses = df_houses.dropna(subset=["price"])
 
 ## check if column has a value outside of datatype bounds like with price
+
+# Part II Data Analysis
 
