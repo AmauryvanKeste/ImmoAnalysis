@@ -150,3 +150,12 @@ df_houses = df_houses.dropna(subset=["price"])
 
 # Part II Data Analysis
 
+    Which variable is the target ?
+    How many rows and columns ?
+    What is the correlation between the variables and the target ? (Why might that be?)
+    What is the correlation between the variables and the other variables ? (Why?)
+    Which variables have the greatest influence on the target ?
+    Which variables have the least influence on the target ?
+    How many qualitative and quantitative variables are there ? How would you transform these values into numerical values ?
+    Percentage of missing values per column ?
+
