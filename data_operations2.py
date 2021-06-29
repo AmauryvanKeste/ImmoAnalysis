@@ -109,5 +109,12 @@ if __name__ == '__main__':
     main()
 
 
-
+# Price column:
+    # Drop all 'no' elements
+        # indexNames = df_houses[df_houses['price'] == 'no' ].index
+        # df_houses.drop(indexNames, inplace=True)
+    # Convert colimn dtype to float64
+        #df_houses.price = df_houses.price.astype('float64')
+    # Calculate mean price
+        # df_houses.price.mean()
 
