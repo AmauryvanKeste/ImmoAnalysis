@@ -200,7 +200,6 @@ def main():
     print(corr_matrix)
 
     # visualise correlations
-
     import matplotlib.pyplot as plt
     import seaborn as sns
     fig_correlation_heatmap = plt.figure()  # figsize=(width, height)
@@ -209,32 +208,27 @@ def main():
     fig_correlation_heatmap.suptitle("correlations between price & other columns", fontsize=9)
     plt.title("correlations")
 
-    # plt.clf()
+    # visualize NaN values/column before replacing them
+    # df_meaningful_nan dataframe set after reading in csv
     fig_barplot_nans = plt.figure()
     sns.set_theme(style="whitegrid")
+    plt.ylim(0,100)  # range allowed on y-axis
+    y_start, y_end, y_step = 0, 100, 5
+    plt.yticks(np.arange(y_start, y_end+y_step, y_step))  # every y+5 a new line (tick)
     df_meaningful_nan = df_nan_values[df_nan_values["nans_percentage"] > 0]
-    df_meaningful_nan
-    sns.barplot(x=df_meaningful_nan.index, y='nans_percentage', data=df_meaningful_nan)
-    fig_barplot_nans.suptitle("NaN % for columns containing NaN values", fontsize=9)
+    sns.barplot(x=df_meaningful_nan.index, y='nans_percentage', data=df_meaningful_nan, palette="Blues_d")
+    fig_barplot_nans.suptitle("NaN %/column before replacing NaN values with mean()/False", fontsize=9)
     plt.title("NaN percentage per column")
 
-
+    # use show at end to display all plt.figure()'s
     plt.show()
 
 if __name__ == '__main__':
     main()
 
 """
-iterating over columns in a dataframe with iteritems
-
 def print_unique_values(dframe):
     for column_name, column_data in dframe.iteritems():
         print(f"now on column: {column_name} \n")
         print(dframe[column_name].unique())
-
-    
-# print rows where price = 0.0
-price_zeroes = df_houses[df_houses["price"] == 0]
-print(price_zeroes)
-
 """
