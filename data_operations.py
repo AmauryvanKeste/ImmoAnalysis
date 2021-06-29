@@ -197,10 +197,14 @@ def main():
 
     import matplotlib.pyplot as plt
     import seaborn as sns
+    fig = plt.figure()
     sns.set_theme(style="whitegrid")
-
     sns.heatmap(corr_matrix, cmap="YlGnBu")
+    fig.suptitle("correlations between price & other columns", fontsize=12)
+    plt.title("correlations")
     plt.show()
+
+
 if __name__ == '__main__':
     main()
 
