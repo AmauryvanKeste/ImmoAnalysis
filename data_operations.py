@@ -37,16 +37,20 @@ def change_zero_ones_to_true_false(dframe, columns_list):
         replace_value_in_column(dframe, column, 1, True)
 
 
+def change_no_yes_to_false_true(dframe, columns_list):
+    for column in columns_list:
+        replace_nan_in_column(dframe,[column], "no")
+        replace_value_in_column(dframe, column, "no", False)
+        replace_value_in_column(dframe, column, "yes", True)
+
+
 def count_nans_in_column(dframe, column):
     return dframe[column].isna().sum()
-
 
 
 def replace_nan_in_column(dframe, columns_list, new_val):
     for column in columns_list:
         dframe[column] = dframe[column].fillna(new_val)
-    # checked for NaN values after this operation, all counts were 0
-    # print(count_nans_in_column(dframe, columns_list[0]))
 
 
 def convert_nan_to_datatype(dframe, columns_list, replace_nan_val, datatype):
@@ -111,15 +115,18 @@ def main():
     rename_columns_dict(df_houses, d_rename_cols_old_new)
 
     # converting columns to dtype bool
+    # todo: change yes no to true false before converting to bool
+    # set 1"s to True and 0's to False for following columns
+    booleanize_these_columns = ["garden", "terrace"]
+    change_zero_ones_to_true_false(df_houses, booleanize_these_columns)
+    yes_no_to_true_false = ["furnished", "swimming_pool"]
+    change_no_yes_to_false_true(df_houses, yes_no_to_true_false)
+
     cols_that_change_to_bool_dtype = ["swimming_pool", "garden", "terrace", "furnished"]
     cast_to_datatype(df_houses, cols_that_change_to_bool_dtype, "bool")
 
     # change NaN to False for "swimming_pool" column
     replace_nan_in_column(df_houses, ["swimming_pool"], False)
-
-    # set 1"s to True and 0's to False for following columns
-    booleanize_these_columns = ["garden", "terrace"]
-    change_zero_ones_to_true_false(df_houses, booleanize_these_columns)
 
     # replace "no" to "NaN" for price column
     replace_value_in_column(df_houses, "price", "no", np.NaN)
