@@ -75,16 +75,7 @@ def create_category(category_list):
 
 
 def get_mean_for_column(dframe, column):
-    print("-----------tbing-----------")
-    print(dframe[column].mean())
-    print("-----------tbing done-----------")
     return dframe[column].mean()
-    # if dframe[column].dtype == np.int8:
-    #     print(f"column {column}: {round(dframe[column].mean())}")
-        # return dframe[column].mean()
-    # elif dframe[column].dtype == float:
-    #     print(f"column {column}: {dframe[column].mean()}")
-        # return dframe[column].mean()
 
 
 def write_to_csv(dframe, file_path):
@@ -93,13 +84,9 @@ def write_to_csv(dframe, file_path):
 
 def main():
     # https://pandas.pydata.org/pandas-docs/stable/user_guide/missing_data.html
-    # Because NaN is a float
-    # a column of integers with even one missing values is cast to floating-point dtype
     # read in all rows and from col1 till last column
     df_houses = pd.read_csv("final_list_houses_dataset.csv", sep=',').iloc[:, 1:]
-    # drop 'Unnamed: 0' column as use for it is unknown
-    # df_houses.drop('Unnamed: 0', axis=1, inplace=True)
-    # df_houses = pd.read_csv.iloc[:, 1:]
+
     # sorting out of habit for performance
     df_houses.sort_index()
     print(get_mean_for_column(df_houses, "number of facades"))
@@ -171,12 +158,10 @@ def main():
                            "property_type": property_type_cat,
                            "property_subtype": property_subtype_cat}
 
-    # turn every column into a pd.Series(Category)
+    # turn keys (columns) in categories_column_d dictionary into a Category
     for column, cat_list in categories_column_d.items():
         cat_type = create_category(cat_list)
         df_houses[column] = df_houses[column].astype(cat_type)
-
-    # df_houses[column] = category_builder(cat_list)
 
     # replace NaN's for every column in list with value returned by get_mean_for_column()
     columns_to_mean = ["facades", "bedrooms", "price", "open_fire"]
@@ -184,33 +169,15 @@ def main():
     for column in columns_to_mean:
         # means[column] = get_mean_for_column(df_houses, column)
         replace_nan_in_column(df_houses, columns_to_mean, get_mean_for_column(df_houses, column))
-    """ means calculated:
-    facades:   2.2822037257233454
-    bedrooms:  3.595719381688466
-    price:     481228.216706302
-    open_fire: 0.08462148236226714
-    """
 
     # print data types to check successful conversion
     print(df_houses.dtypes)
-
-    # todo: thins go wrong starting wen double commas are encountered (row 7)
-    # todo: do we have all columns before printing them out to csv?
-    # todo: problem lies with building_state, property_type, they still have NaN values
-    # 7,850.0,849000.0,,2,9,not installed,True,0,3300,615.0,True,20,True,,exceptional,False,0
 
     print(df_houses.head(20))
     # write to csv file to check more thoroughly
     output_csv = "temp_output.csv"
     write_to_csv(df_houses, output_csv)
     # todo: first multiple comma issue in output
-    """
-    6,256.0,210000.0,undefined,3,4,usa hyper equipped,True,0,7080,201.0,False,0,True,,country,False,0
-    7,850.0,849000.0,,2,9,not installed,True,0,3300,615.0,True,20,True,,exceptional,False,0
-    8,161.0,295500.0,,0,4,usa uninstalled,True,0,5590,533.0,False,0,True,,building,True,631
-    9,61.0,42000.0,,0,1,,True,0,1460,194.0,False,0,True,,apartment,False,0
-    10,160.0,229000.0,,2,3,,True,0,6230,480.0,True,10,True,,mansion,True,400
-    """
     print("finished")
 
 
