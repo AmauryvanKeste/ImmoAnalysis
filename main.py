@@ -60,6 +60,7 @@ def main():
     df_houses.drop(indexes_price_is_no, inplace=True)
 
     # drop duplicate rows
+    df_houses.drop_duplicates()
 
 
     # convert columns to float
@@ -113,23 +114,22 @@ def main():
     # write to csv file
     immo_df_ops.write_to_csv("temp_output.csv")
 
-    # start visualisation
+    ## start visualisation
 
-    # create corr_matrix
-    corr_matrix = df_houses.corr().abs()
-
-    # visualise correlations with a heatmap
     import matplotlib.pyplot as plt
     import seaborn as sns
     chart_style = "whitegrid"
     palette_blue = "Blues_d"
     colormap = sns.color_palette("Blues_d")
-
+    save_prefix = "files/charts/"
+    ## correlation matrix
+    corr_matrix = df_houses.corr().abs()
     fig_correlation_heatmap = plt.figure()  # figsize=(width, height)
     sns.set_theme(style=chart_style)
     sns.heatmap(corr_matrix, cmap=colormap)
     fig_correlation_heatmap.suptitle("correlations between price & other columns", fontsize=9)
     plt.title("correlations")
+    plt.savefig(save_prefix + "correlations_heatmap.png")
 
     # visualize NaN values/column before replacing them with a bar plot
     # df_meaningful_nan dataframe set after reading in csv
@@ -146,6 +146,7 @@ def main():
     sns.barplot(x=df_meaningful_nan.index, y='nans_percentage', data=df_meaningful_nan, palette=palette_blue)
     fig_barplot_nans.suptitle("NaN %/column before replacing NaN values with mean()/False", fontsize=9)
     plt.title("NaN percentage per column")
+    plt.savefig(save_prefix + "nan_percentages_bar_plot.png")
 
     # region data
     # a new column region is created based on following conditions
@@ -189,6 +190,7 @@ def main():
     plt.yticks(np.arange(y_start, y_end+y_step, y_step))
     plt.ylabel("price in euro * 1 million")
     plt.xlabel(x)
+    plt.savefig(save_prefix + "price_mean_per_region.png")
 
     # create index
     # row_count = df_region_means.shape[0]  # same as len(df_region_means)
@@ -208,7 +210,7 @@ def main():
     bel_sq_fig = sns.barplot(x=belgium_sq_top5.index, y=belgium_sq_top5.values,  palette='Blues_d')
     bel_sq_fig.set_ylabel('Price per square meter €')
     fig4 = bel_sq_fig.get_figure()
-    fig4.savefig("prices_sq_m_belgium.png")
+    fig4.savefig(save_prefix + "prices_sq_m_belgium.png")
 
     bedrooms_price = sns.boxplot(y='bedrooms', x='price', data=df_houses, width=0.8, orient='h', showmeans=True,
                                  fliersize=3)
@@ -216,22 +218,21 @@ def main():
     x_start, x_end, x_step = 0, 2000000, 100000
     plt.xticks(np.arange(x_start, x_end + x_step, x_step))
     fig8 = bedrooms_price.get_figure()
-    fig8.savefig("bedrooms_price.png")
+    fig8.savefig(save_prefix + "bedrooms_price.png")
 
     fig, ax = plt.subplots(figsize=(12, 6))
     terrace_price = sns.boxplot(y='terrace', x='price', data=df_houses, width=0.8, orient='h', showmeans=True,
                                 fliersize=3, ax=ax)
     plt.title('./Terrace and Price', color='black', fontsize=36)
     fig9 = terrace_price.get_figure()
-    fig9.savefig("terrace_price.png")
-    plt.show()
+    fig9.savefig(save_prefix + "terrace_price.png")
 
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.boxplot(y='building_state', x='price', data=df_houses, width=0.8, orient='h', showmeans=True, fliersize=3,
                 ax=ax)
     plt.title('State and price', color='black', fontsize=36)
     fig10 = terrace_price.get_figure()
-    fig10.savefig("state_price.png")
+    fig10.savefig(save_prefix + "state_price.png")
 
     plt.show()
 
