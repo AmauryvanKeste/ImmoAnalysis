@@ -1,4 +1,5 @@
 from dfops import DfOps
+from dfops import ChartMaker as Chart
 import numpy as np
 import pandas as pd
 
@@ -10,7 +11,7 @@ def main():
     immo_df_ops = DfOps(df_houses, 20, 15)
 
     # renaming columns for easy of use
-    d_rename_cols_old_new = {
+    rename_cols_old_new_d = {
         "Area [m²]": "area",
         "Price [€]": "price",
         "state of the building": "building_state",
@@ -26,7 +27,7 @@ def main():
         "subtype of property": "property_subtype",
         "garden surface [m²]": "garden_surface"
     }
-    immo_df_ops.rename_columns_dict(d_rename_cols_old_new)
+    immo_df_ops.rename_columns_dict(rename_cols_old_new_d)
     # todo: strip NaN's in facades, area, open_fire
 
     ## pre-processing - keep all NaN values here!
@@ -37,6 +38,7 @@ def main():
     # count nans in rows
     percent_nan_values = df_houses.isna().sum() * 100 / len(df_houses)
     df_nan_values = pd.DataFrame({"nans_percentage": percent_nan_values})
+    df_non_zero_nan_columns = df_nan_values[df_nan_values["nans_percentage"] > 0]
 
     ## processing - data cleaning after having the NaN count
 
@@ -61,7 +63,6 @@ def main():
 
     # drop duplicate rows
     df_houses.drop_duplicates()
-
 
     # convert columns to float
     to_float_columns = ["facades", "bedrooms", "open_fire", "price"]
@@ -104,7 +105,6 @@ def main():
         cat_type = immo_df_ops.create_category(cat_list)
         df_houses[column] = df_houses[column].astype(cat_type)
 
-
     immo_df_ops.print_datatypes()
     immo_df_ops.print_columns_has_nan_check()
 
@@ -116,37 +116,29 @@ def main():
 
     ## start visualisation
 
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-    chart_style = "whitegrid"
-    palette_blue = "Blues_d"
-    colormap = sns.color_palette("Blues_d")
-    save_prefix = "files/charts/"
     ## correlation matrix
-    corr_matrix = df_houses.corr().abs()
-    fig_correlation_heatmap = plt.figure()  # figsize=(width, height)
-    sns.set_theme(style=chart_style)
-    sns.heatmap(corr_matrix, cmap=colormap)
-    fig_correlation_heatmap.suptitle("correlations between price & other columns", fontsize=9)
-    plt.title("correlations")
-    plt.savefig(save_prefix + "correlations_heatmap.png")
+    matrix_chart = Chart(df_houses, "correlation_matrix")
 
-    # visualize NaN values/column before replacing them with a bar plot
-    # df_meaningful_nan dataframe set after reading in csv
-    fig_barplot_nans = plt.figure()
-    sns.set_theme(style=chart_style)
+    matrix_correlations = matrix_chart.get_correlation_matrix()  # df_houses.corr().abs()
+    matrix_chart.set_sns_theme_style()
+    matrix_chart.create_sns_heatmap(matrix_correlations)
+    matrix_chart.set_figure_title("correlations between price & other columns")
+    matrix_chart.set_plot_title("correlations")
+    matrix_chart.save_plot_figure("correlations_heatmap")
+    # matrix_chart.plot_show_figures()
 
-    plt.ylim(0, 100)  # range allowed on y-axis
-    y_start, y_end, y_step = 0, 100, 5
-    plt.yticks(np.arange(y_start, y_end+y_step, y_step))
-    # data = df with only columns that have percentages > 0
-    df_meaningful_nan = df_nan_values[df_nan_values["nans_percentage"] > 0]
+    ## visualize NaN values
+    percentages_chart = Chart(df_non_zero_nan_columns, "nan_percentages_bar_plot")
+    percentages_chart.set_sns_theme_style()
+    percentages_chart.set_plot_ylim(0, 100)
+    percentages_chart.set_yticks(0, 100, 5)
 
     # create bar plot for NaN averages
-    sns.barplot(x=df_meaningful_nan.index, y='nans_percentage', data=df_meaningful_nan, palette=palette_blue)
-    fig_barplot_nans.suptitle("NaN %/column before replacing NaN values with mean()/False", fontsize=9)
-    plt.title("NaN percentage per column")
-    plt.savefig(save_prefix + "nan_percentages_bar_plot.png")
+    percentages_chart.create_sns_barplot("nans_percentage")
+    percentages_chart.set_figure_title("NaN % per column before cleaning data")
+    percentages_chart.set_plot_title("NaN percentage per column")
+    percentages_chart.save_plot_figure("percentages_nan_per_column")
+    # percentages_chart.plot_show_figures()
 
     # region data
     # a new column region is created based on following conditions
@@ -165,7 +157,7 @@ def main():
     brussels_mean = df_houses[df_houses["region"] == "brussels"].mean()
     wallonia_mean = df_houses[df_houses["region"] == "wallonia"].mean()
     flanders_mean = df_houses[df_houses["region"] == "flanders"].mean()
-    belgian_mean  = df_houses.mean()
+    belgian_mean = df_houses.mean()
     region_means = {"brussels": brussels_mean, 'wallonia': wallonia_mean, 'flanders': flanders_mean, 'belgium': belgian_mean}
     df_region_means = pd.DataFrame(region_means)
     mean_price_per_region = df_region_means.loc["price", df_region_means.columns]
@@ -176,7 +168,13 @@ def main():
     belgium     4.828550e+05
     Name: price, dtype: float64
     """
-    # PLOTTING SERIES DON'T DEFINE DATA=SOME_VAR this fix works for barplot but not for catplot
+
+    ## stopped refactoring here
+    from matplotlib import pyplot as plt
+    import seaborn as sns
+
+    palette_blue = "Blues_d"
+    save_prefix = "files/charts/"
     x = list(mean_price_per_region.index)
     print(x)
     sns.catplot(
