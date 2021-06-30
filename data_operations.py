@@ -131,34 +131,48 @@ def main():
     # data = df with only columns that have percentages > 0
     df_meaningful_nan = df_nan_values[df_nan_values["nans_percentage"] > 0]
 
+    # create bar plot for NaN averages
     sns.barplot(x=df_meaningful_nan.index, y='nans_percentage', data=df_meaningful_nan, palette=palette_blue)
     fig_barplot_nans.suptitle("NaN %/column before replacing NaN values with mean()/False", fontsize=9)
     plt.title("NaN percentage per column")
 
+
+    # region data
+    # a new column region is created based on following conditions
+    # conditions for region
+    brussels_region = df_houses['locality'].between(1000, 1299)
+    wallonia_region = df_houses['locality'].between(1300, 1499) | df_houses['locality'].between(4000, 7999)
+    flanders_region = df_houses['locality'].between(1500, 3999) | df_houses['locality'].between(8000, 9999)
+
+    # create a region column & fill based on conditions
+    conditions = [brussels_region, wallonia_region, flanders_region]
+    choice = ["brussels", "wallonia", "flanders"]
+    df_houses["region"] = np.select(conditions, choice)
+
+    # calculate means of all numeric columns for every region
+    # ('area', 'price', 'facades', 'bedrooms', 'furnished', 'open_fire', 'locality', 'land_surface')
+    brussels_mean = df_houses[df_houses["region"] == "brussels"].mean()
+    wallonia_mean = df_houses[df_houses["region"] == "wallonia"].mean()
+    flanders_mean = df_houses[df_houses["region"] == "flanders"].mean()
+    belgian_mean  = df_houses.mean()
+    region_means = {"brussels": brussels_mean, 'wallonia': wallonia_mean, 'flanders': flanders_mean, 'belgium': belgian_mean}
+    df_region_means = pd.DataFrame(region_means)
+
+
+
+    # avg price barplot
+    # plt.figure(figsize=(15,10))
+    # plt.ylim(0, 100)  # range allowed on y-axis
+    # y_start, y_end, y_step = 0, 2*1e6, 1e5
+    # plt.yticks(np.arange(y_start, y_end+y_step, y_step))
+    # plt.title('Average Prices in BE', color='black', fontsize=9)
+    # sns.barplot(y=["price"], data=df_region_means[:], palette=palette_blue)
+    # plt.ylabel('Average Price €')
+    #     fig3 = avg_fig.get_figure()
+    #     fig3.savefig("prices_avg_belgium.png")
+
     # use show at end to display all plt.figure()'s
     plt.show()
-
-    # Avg prices belgium df:
-        # brussels = df_analysis.loc[(df_analysis['locality'] >= 1000) & (df_analysis['locality'] <= 1299), 'price']
-        # wallonia = df_analysis.loc[((df_analysis['locality'] >= 1300) & (df_analysis['locality'] <= 1499)) | ((df_analysis['locality'] >= 4000) & (df_analysis['locality'] <= 7999)), 'price']
-        # flanders = df_analysis.loc[((df_analysis['locality'] >= 1500) & (df_analysis['locality'] <= 3999)) | ((df_analysis['locality'] >= 8000) & (df_analysis['locality'] <= 9999)), 'price']
-        # fl_mean = flanders.mean()
-        # br_mean = brussels.mean()
-        # wal_mean = wallonia.mean()
-        # bel_mean = df_analysis['price'].mean()
-        # regions = {'Region': ['Brussels', 'Wallonia', 'Flanders', 'Belgium'], 'Avg_Price': [br_mean, wal_mean, fl_mean, bel_mean]}
-        # df_regions = pd.DataFrame(regions)
-    # Avg prices Chart:
-        plt.figure(figsize=(15,10))
-        plt.ylim(0, 100)  # range allowed on y-axis
-        y_start, y_end, y_step = 0, 2*1e6, 1e5
-        plt.yticks(np.arange(y_start, y_end+y_step, y_step))
-        plt.title('Average Prices in Belgium', color='black', fontsize=36)
-        avg_fig = sns.barplot(x=df_regions.Region, y=df_regions.Avg_Price, data=df_regions, palette='Blues_d')
-        avg_fig.set_ylabel('Average Price €')
-        fig3 = avg_fig.get_figure()
-        fig3.savefig("prices_avg_belgium.png")
-
 
 if __name__ == '__main__':
     main()
