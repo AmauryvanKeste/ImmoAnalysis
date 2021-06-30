@@ -106,9 +106,12 @@ def main():
     # visualise correlations with a heatmap
     import matplotlib.pyplot as plt
     import seaborn as sns
-    fig_correlation_heatmap = plt.figure()  # figsize=(width, height)
-    sns.set_theme(style="whitegrid")
+    chart_style = "whitegrid"
+    palette_blue = "Blues_d"
     colormap = sns.color_palette("Blues_d")
+
+    fig_correlation_heatmap = plt.figure()  # figsize=(width, height)
+    sns.set_theme(style=chart_style)
     sns.heatmap(corr_matrix, cmap=colormap)
     fig_correlation_heatmap.suptitle("correlations between price & other columns", fontsize=9)
     plt.title("correlations")
@@ -116,7 +119,7 @@ def main():
     # visualize NaN values/column before replacing them with a bar plot
     # df_meaningful_nan dataframe set after reading in csv
     fig_barplot_nans = plt.figure()
-    sns.set_theme(style="whitegrid")
+    sns.set_theme(style=chart_style)
 
     plt.ylim(0, 100)  # range allowed on y-axis
     y_start, y_end, y_step = 0, 100, 5
@@ -124,7 +127,7 @@ def main():
     # data = df with only columns that have percentages > 0
     df_meaningful_nan = df_nan_values[df_nan_values["nans_percentage"] > 0]
 
-    sns.barplot(x=df_meaningful_nan.index, y='nans_percentage', data=df_meaningful_nan, palette="Blues_d")
+    sns.barplot(x=df_meaningful_nan.index, y='nans_percentage', data=df_meaningful_nan, palette=palette_blue)
     fig_barplot_nans.suptitle("NaN %/column before replacing NaN values with mean()/False", fontsize=9)
     plt.title("NaN percentage per column")
 
