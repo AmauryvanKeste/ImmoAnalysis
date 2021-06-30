@@ -99,6 +99,9 @@ def main():
     immo_df_ops.print_datatypes()
     immo_df_ops.print_columns_has_nan_check()
 
+    # create a column with square prices
+    df_houses['price_sq'] = round(df_houses['price'] / df_houses['area'], 0)
+
     # write to csv file
     immo_df_ops.write_to_csv("temp_output.csv")
 
@@ -185,7 +188,45 @@ def main():
     # df_region_means.index = index_list
     # df_region_means.set_index(inplace=True)
 
+    # create square meter df
+    belgium_sq_top5 = df_houses.groupby('locality').price_sq.mean().round().sort_values(ascending=False).head()
+
+    # Chart Top 5 per square meter in Belgium
+    plt.figure(figsize=(10, 5))
+    plt.ylim(0, 100)  # range allowed on y-axis
+    y_start, y_end, y_step = 0, 8000, 1000
+    plt.yticks(np.arange(y_start, y_end + y_step, y_step))
+    plt.title('Top 5 Prices per square meter in Belgium', color='black', fontsize=22)
+    bel_sq_fig = sns.barplot(x=belgium_sq_top5.index, y=belgium_sq_top5.values,  palette='Blues_d')
+    bel_sq_fig.set_ylabel('Price per square meter €')
+    fig4 = bel_sq_fig.get_figure()
+    fig4.savefig("prices_sq_m_belgium.png")
+
+    bedrooms_price = sns.boxplot(y='bedrooms', x='price', data=df_houses, width=0.8, orient='h', showmeans=True,
+                                 fliersize=3)
+    plt.title('Price in function of number of bedrooms', color='black', fontsize=36)
+    x_start, x_end, x_step = 0, 2000000, 100000
+    plt.xticks(np.arange(x_start, x_end + x_step, x_step))
+    fig8 = bedrooms_price.get_figure()
+    fig8.savefig("bedrooms_price.png")
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    terrace_price = sns.boxplot(y='terrace', x='price', data=df_houses, width=0.8, orient='h', showmeans=True,
+                                fliersize=3, ax=ax)
+    plt.title('./Terrace and Price', color='black', fontsize=36)
+    fig9 = terrace_price.get_figure()
+    fig9.savefig("terrace_price.png")
     plt.show()
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.boxplot(y='building_state', x='price', data=df_houses, width=0.8, orient='h', showmeans=True, fliersize=3,
+                ax=ax)
+    plt.title('State and price', color='black', fontsize=36)
+    fig10 = terrace_price.get_figure()
+    fig10.savefig("state_price.png")
+
+    plt.show()
+
 
 if __name__ == '__main__':
     main()
