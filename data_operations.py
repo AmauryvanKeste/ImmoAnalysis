@@ -108,7 +108,8 @@ def main():
     import seaborn as sns
     fig_correlation_heatmap = plt.figure()  # figsize=(width, height)
     sns.set_theme(style="whitegrid")
-    sns.heatmap(corr_matrix, cmap="YlGnBu")
+    colormap = sns.color_palette("Blues_d")
+    sns.heatmap(corr_matrix, cmap=colormap)
     fig_correlation_heatmap.suptitle("correlations between price & other columns", fontsize=9)
     plt.title("correlations")
 
