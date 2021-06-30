@@ -60,7 +60,9 @@ class DfOps:
         self.df[column] = self.df[column].fillna(replace_nan_value)
 
     def replace_nan_in_column(self, columns, replace_nan_value):
-        list(columns) if not isinstance(columns, list) else self.apply_fillna_to_column(columns, replace_nan_value)
+        if not isinstance(columns, list):
+            list(columns)
+        self.apply_fillna_to_column(columns, replace_nan_value)
 
     # def convert_nan_to_datatype(self, columns, replace_nan_val, datatype):
     #     self.convert_cols_to_datatype_and_do_fillna(columns, replace_nan_val, datatype)

@@ -28,9 +28,24 @@ def main():
     }
     immo_df_ops.rename_columns_dict(d_rename_cols_old_new)
     # todo: strip NaN's in facades, area, open_fire
+
+    ## pre-processing - keep all NaN values here!
+
+    # replace "no" to "NaN" for price column
+    immo_df_ops.replace_value_in_column("price", "no", np.NaN)
+
+    # count nans in rows
+    percent_nan_values = df_houses.isna().sum() * 100 / len(df_houses)
+    df_nan_values = pd.DataFrame({"nans_percentage": percent_nan_values})
+
+    ## processing - data cleaning after having the NaN count
+
     # set 1"s to True and 0's to False for following columns
     booleanize_these_columns = ["garden", "terrace"]
     immo_df_ops.change_zero_ones_to_true_false(booleanize_these_columns)
+
+    # change NaN to False for "swimming_pool" column
+    immo_df_ops.replace_nan_in_column("swimming_pool", False)
 
     # set no's to False and yes' to True for following columns
     yes_no_to_true_false = ["furnished", "swimming_pool"]
@@ -40,19 +55,12 @@ def main():
     cols_that_change_to_bool_dtype = ["swimming_pool", "garden", "terrace", "furnished"]
     immo_df_ops.convert_cols_to_datatype(cols_that_change_to_bool_dtype, "bool")
 
-    # change NaN to False for "swimming_pool" column
-    immo_df_ops.replace_nan_in_column("swimming_pool", False)
-
-    # count nans in rows
-    percent_nan_values = df_houses.isna().sum() * 100 / len(df_houses)
-    df_nan_values = pd.DataFrame({"nans_percentage": percent_nan_values})
-
-    # replace "no" to "NaN" for price column
-    immo_df_ops.replace_value_in_column("price", "no", np.NaN)
-
     # drop price rows that have NaN value
     indexes_price_is_no = df_houses[df_houses["price"].isna()].index
     df_houses.drop(indexes_price_is_no, inplace=True)
+
+    # drop duplicate rows
+
 
     # convert columns to float
     to_float_columns = ["facades", "bedrooms", "open_fire", "price"]
@@ -182,7 +190,7 @@ def main():
     plt.ylabel("price in euro * 1 million")
     plt.xlabel(x)
 
-    # create and set an index for df_region_means dataframe
+    # create index
     # row_count = df_region_means.shape[0]  # same as len(df_region_means)
     # index_list = list(range(0, row_count))
     # df_region_means.index = index_list
