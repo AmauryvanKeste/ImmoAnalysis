@@ -136,7 +136,6 @@ def main():
     fig_barplot_nans.suptitle("NaN %/column before replacing NaN values with mean()/False", fontsize=9)
     plt.title("NaN percentage per column")
 
-
     # region data
     # a new column region is created based on following conditions
     # conditions for region
@@ -157,21 +156,35 @@ def main():
     belgian_mean  = df_houses.mean()
     region_means = {"brussels": brussels_mean, 'wallonia': wallonia_mean, 'flanders': flanders_mean, 'belgium': belgian_mean}
     df_region_means = pd.DataFrame(region_means)
+    mean_price_per_region = df_region_means.loc["price", df_region_means.columns]
+    """
+    brussels    1.320469e+06
+    wallonia    3.632886e+05
+    flanders    4.678083e+05
+    belgium     4.828550e+05
+    Name: price, dtype: float64
+    """
+    # PLOTTING SERIES DON'T DEFINE DATA=SOME_VAR this fix works for barplot but not for catplot
+    x = list(mean_price_per_region.index)
+    print(x)
+    sns.catplot(
+        data=mean_price_per_region,
+        x=x,
+        y=mean_price_per_region.values,  # values are the price float values
+        kind="bar",
+        palette=palette_blue
+    )
+    y_start, y_end, y_step = 0, 1400000, 100000
+    plt.yticks(np.arange(y_start, y_end+y_step, y_step))
+    plt.ylabel("price in euro * 1 million")
+    plt.xlabel(x)
 
+    # create and set an index for df_region_means dataframe
+    # row_count = df_region_means.shape[0]  # same as len(df_region_means)
+    # index_list = list(range(0, row_count))
+    # df_region_means.index = index_list
+    # df_region_means.set_index(inplace=True)
 
-
-    # avg price barplot
-    # plt.figure(figsize=(15,10))
-    # plt.ylim(0, 100)  # range allowed on y-axis
-    # y_start, y_end, y_step = 0, 2*1e6, 1e5
-    # plt.yticks(np.arange(y_start, y_end+y_step, y_step))
-    # plt.title('Average Prices in BE', color='black', fontsize=9)
-    # sns.barplot(y=["price"], data=df_region_means[:], palette=palette_blue)
-    # plt.ylabel('Average Price €')
-    #     fig3 = avg_fig.get_figure()
-    #     fig3.savefig("prices_avg_belgium.png")
-
-    # use show at end to display all plt.figure()'s
     plt.show()
 
 if __name__ == '__main__':
