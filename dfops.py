@@ -1,9 +1,8 @@
 import pandas as pd
 import numpy as np
 # conda install multipledispatch
-# this is for playing with method overloading if needed
-# put @dispatch(type, type, ..) above a function for every overload
-from multipledispatch import dispatch
+# from multipledispatch import dispatch
+
 
 class DfOps:
 
@@ -50,19 +49,18 @@ class DfOps:
             self.df[col] = self.df[col].astype(set_datatype_to)
 
     # fillna and convert to datatype
-    def convert_cols_to_datatype_and_do_fillna(self, columns, fill_na_value=None, set_datatype_to=None):
+    def convert_cols_to_datatype_and_do_fillna(self, columns, fill_na_value, set_datatype_to=None):
         # do fillna AND convert to datatype
         if fill_na_value and set_datatype_to:
-            for col in columns:
-                self.df[col] = self.df[col].fillna(fill_na_value).astype(set_datatype_to)
+            for index, column in enumerate(columns):
+                self.df[column] = self.df[column].fillna(fill_na_value).astype(set_datatype_to)
 
     # do fillna only
-    def apply_fillna_to_columns(self, columns, replace_nan_value):
-        for col in columns:
-            self.df[col] = self.df[col].fillna(replace_nan_value)
+    def apply_fillna_to_column(self, column, replace_nan_value):
+        self.df[column] = self.df[column].fillna(replace_nan_value)
 
     def replace_nan_in_column(self, columns, replace_nan_value):
-        list(columns) if not isinstance(columns, list) else self.apply_fillna_to_columns(columns, replace_nan_value)
+        list(columns) if not isinstance(columns, list) else self.apply_fillna_to_column(columns, replace_nan_value)
 
     # def convert_nan_to_datatype(self, columns, replace_nan_val, datatype):
     #     self.convert_cols_to_datatype_and_do_fillna(columns, replace_nan_val, datatype)
@@ -75,9 +73,8 @@ class DfOps:
         except Exception as err:
             print(f"something went wrong when creating categorical: {err}")
 
-    def get_mean_for_column(self, column):
-        print(f"mean for {column}: {self.df[column].mean()}")
-        return self.df[column].mean()
+    def apply_mean_to_column(self, column):
+        self.apply_fillna_to_column(column, self.df[column].mean())
 
     def write_to_csv(self, file_path):
         self.df.to_csv(file_path)
@@ -94,4 +91,3 @@ class DfOps:
         print("----- columns with missing values = True -------->")
         print(self.df.isnull().any())
         print("----------- missing values check END ------------>")
-

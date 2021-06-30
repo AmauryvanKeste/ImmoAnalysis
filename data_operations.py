@@ -27,7 +27,7 @@ def main():
         "garden surface [m²]": "garden_surface"
     }
     immo_df_ops.rename_columns_dict(d_rename_cols_old_new)
-
+    # todo: strip NaN's in facades, area, open_fire
     # set 1"s to True and 0's to False for following columns
     booleanize_these_columns = ["garden", "terrace"]
     immo_df_ops.change_zero_ones_to_true_false(booleanize_these_columns)
@@ -49,10 +49,19 @@ def main():
 
     # replace "no" to "NaN" for price column
     immo_df_ops.replace_value_in_column("price", "no", np.NaN)
-    immo_df_ops.convert_cols_to_datatype(["facades", "bedrooms", "open_fire", "price"], "float64")
-    # https://datatofish.com/rows-with-nan-pandas-dataframe/
+
+    # drop price rows that have NaN value
     indexes_price_is_no = df_houses[df_houses["price"].isna()].index
     df_houses.drop(indexes_price_is_no, inplace=True)
+
+    # convert columns to float
+    to_float_columns = ["facades", "bedrooms", "open_fire", "price"]
+    immo_df_ops.convert_cols_to_datatype(to_float_columns, "float64")
+
+    # replace NaN's for every column in list with value returned by get_mean_for_column()
+    columns_to_mean = ["area", "facades", "bedrooms", "price", "open_fire"]
+    for index, column in enumerate(columns_to_mean):
+        immo_df_ops.apply_mean_to_column(column)
 
     # replace exception to exceptional
     immo_df_ops.replace_value_in_column("property_subtype", "exceptiona", "exceptional")
@@ -86,11 +95,6 @@ def main():
         cat_type = immo_df_ops.create_category(cat_list)
         df_houses[column] = df_houses[column].astype(cat_type)
 
-    # replace NaN's for every column in list with value returned by get_mean_for_column()
-    columns_to_mean = ["area", "facades", "bedrooms", "price", "open_fire"]
-    for column in columns_to_mean:
-        mean = immo_df_ops.get_mean_for_column(column)
-        immo_df_ops.replace_nan_in_column(column, mean)
 
     immo_df_ops.print_datatypes()
     immo_df_ops.print_columns_has_nan_check()
