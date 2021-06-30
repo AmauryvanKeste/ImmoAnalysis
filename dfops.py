@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 # conda install multipledispatch
 # this is for playing with method overloading if needed
-# put @dispatch(type, type, ..) for every overload
+# put @dispatch(type, type, ..) above a function for every overload
 from multipledispatch import dispatch
 
 class DfOps:
