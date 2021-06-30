@@ -138,6 +138,27 @@ def main():
     # use show at end to display all plt.figure()'s
     plt.show()
 
+    # Avg prices belgium df:
+        # brussels = df_analysis.loc[(df_analysis['locality'] >= 1000) & (df_analysis['locality'] <= 1299), 'price']
+        # wallonia = df_analysis.loc[((df_analysis['locality'] >= 1300) & (df_analysis['locality'] <= 1499)) | ((df_analysis['locality'] >= 4000) & (df_analysis['locality'] <= 7999)), 'price']
+        # flanders = df_analysis.loc[((df_analysis['locality'] >= 1500) & (df_analysis['locality'] <= 3999)) | ((df_analysis['locality'] >= 8000) & (df_analysis['locality'] <= 9999)), 'price']
+        # fl_mean = flanders.mean()
+        # br_mean = brussels.mean()
+        # wal_mean = wallonia.mean()
+        # bel_mean = df_analysis['price'].mean()
+        # regions = {'Region': ['Brussels', 'Wallonia', 'Flanders', 'Belgium'], 'Avg_Price': [br_mean, wal_mean, fl_mean, bel_mean]}
+        # df_regions = pd.DataFrame(regions)
+    # Avg prices Chart:
+        plt.figure(figsize=(15,10))
+        plt.ylim(0, 100)  # range allowed on y-axis
+        y_start, y_end, y_step = 0, 2*1e6, 1e5
+        plt.yticks(np.arange(y_start, y_end+y_step, y_step))
+        plt.title('Average Prices in Belgium', color='black', fontsize=36)
+        avg_fig = sns.barplot(x=df_regions.Region, y=df_regions.Avg_Price, data=df_regions, palette='Blues_d')
+        avg_fig.set_ylabel('Average Price €')
+        fig3 = avg_fig.get_figure()
+        fig3.savefig("prices_avg_belgium.png")
+
 
 if __name__ == '__main__':
     main()
