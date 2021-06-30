@@ -38,7 +38,7 @@ def main():
 
     # change dtype column to bool for following columns
     cols_that_change_to_bool_dtype = ["swimming_pool", "garden", "terrace", "furnished"]
-    immo_df_ops.cast_to_datatype(cols_that_change_to_bool_dtype, "bool")
+    immo_df_ops.convert_cols_to_datatype(cols_that_change_to_bool_dtype, "bool")
 
     # change NaN to False for "swimming_pool" column
     immo_df_ops.replace_nan_in_column("swimming_pool", False)
@@ -49,7 +49,7 @@ def main():
 
     # replace "no" to "NaN" for price column
     immo_df_ops.replace_value_in_column("price", "no", np.NaN)
-    immo_df_ops.cast_to_datatype(["facades", "bedrooms", "open_fire", "price"], "float64")
+    immo_df_ops.convert_cols_to_datatype(["facades", "bedrooms", "open_fire", "price"], "float64")
     # https://datatofish.com/rows-with-nan-pandas-dataframe/
     indexes_price_is_no = df_houses[df_houses["price"].isna()].index
     df_houses.drop(indexes_price_is_no, inplace=True)

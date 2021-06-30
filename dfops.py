@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
-
+# conda install multipledispatch
+# this is for playing with method overloading if needed
+# put @dispatch(type, type, ..) for every overload
+from multipledispatch import dispatch
 
 class DfOps:
 
@@ -41,29 +44,28 @@ class DfOps:
     def count_nans_in_column(self, column: str) -> int:
         return self.df[column].isna().sum()
 
-    def replace_nan_in_column(self, columns, new_val):
-        if isinstance(columns, list):
-            for column in columns:
-                self.df[column] = self.df[column].fillna(new_val)
-        else:
-            # in case you only pass 1 string as column & not a list
-            self.df[columns] = self.df[columns].fillna(new_val)
+    # convert to datatype only
+    def convert_cols_to_datatype(self, columns, set_datatype_to):
+        for col in columns:
+            self.df[col] = self.df[col].astype(set_datatype_to)
 
-    def convert_nan_to_datatype(self, columns, replace_nan_val, datatype):
-        if isinstance(columns, list):
-            for column in columns:
-                self.df[column] = self.df[column].fillna(replace_nan_val).astype(datatype)
-        else:
-            # in case you only pass 1 string as column & not a list
-            self.df[columns] = self.df[columns].fillna(replace_nan_val).astype(datatype)
+    # fillna and convert to datatype
+    def convert_cols_to_datatype_and_do_fillna(self, columns, fill_na_value=None, set_datatype_to=None):
+        # do fillna AND convert to datatype
+        if fill_na_value and set_datatype_to:
+            for col in columns:
+                self.df[col] = self.df[col].fillna(fill_na_value).astype(set_datatype_to)
 
-    def cast_to_datatype(self, columns, datatype):
-        if isinstance(columns, list):
-            for column in columns:
-                self.df[column] = self.df[column].astype(datatype)
-        else:
-            # in case you only pass 1 string as column & not a list
-            self.df[columns] = self.df[columns].astype(datatype)
+    # do fillna only
+    def apply_fillna_to_columns(self, columns, replace_nan_value):
+        for col in columns:
+            self.df[col] = self.df[col].fillna(replace_nan_value)
+
+    def replace_nan_in_column(self, columns, replace_nan_value):
+        list(columns) if not isinstance(columns, list) else self.apply_fillna_to_columns(columns, replace_nan_value)
+
+    # def convert_nan_to_datatype(self, columns, replace_nan_val, datatype):
+    #     self.convert_cols_to_datatype_and_do_fillna(columns, replace_nan_val, datatype)
 
     # https://hashtaggeeks.com/posts/pandas-categorical-data.html
     @staticmethod
@@ -92,3 +94,4 @@ class DfOps:
         print("----- columns with missing values = True -------->")
         print(self.df.isnull().any())
         print("----------- missing values check END ------------>")
+
